@@ -1,60 +1,53 @@
-import os
 import cv2
-from blip2_captioner import BLIP2Captioner
+from captioner_lite import CaptionerLite
 from activity_analyzer import ActivityAnalyzer
+from PIL import Image
+import os
 
-def process_clip(clip_path, captioner, analyzer):
-    """Process a single video clip frame by frame"""
-    cap = cv2.VideoCapture(clip_path)
-    clip_name = os.path.basename(clip_path)
+def process_video(video_path, captioner, analyzer):
+    """Generate and print one caption per second from the video."""
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        print(f"Error: Unable to open video: {video_path}")
+        return
+
+    fps = int(cap.get(cv2.CAP_PROP_FPS))
     frame_count = 0
+    second = 0
+
+    print(f"\nProcessing video: {os.path.basename(video_path)}")
+    print(f"Video FPS: {fps}")
 
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             break
 
-        # Save frame temporarily for captioning
-        frame_path = f"temp_frame_{frame_count}.jpg"
-        cv2.imwrite(frame_path, frame)
+        if frame_count % fps == 0:  # Process one frame per second
+            image_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+            caption = captioner.generate_caption(image_pil)
+            analyzer.update_log(caption)
 
-        # Generate caption and analyze
-        caption = captioner.generate_caption(frame_path)
-        analyzer.update_log(caption)
+            print(f"Second {second:>3}: {caption}")
+            second += 1
 
-        # Check for alerts
-        alerts = analyzer.check_alerts()
-        if alerts:
-            print(f"\nALERT in {clip_name} (Frame {frame_count}):")
-            print(f"Caption: {caption}")
-            print("Alerts:")
-            print("\n".join(alerts))
-
-        # Clean up temp file
-        os.remove(frame_path)
         frame_count += 1
 
     cap.release()
+    print("\nVideo analysis complete.")
 
 def main():
-    # Initialize components (keep your existing initialization)
-    captioner = BLIP2Captioner()
-    analyzer = ActivityAnalyzer()
+    # Define your video path here
+    video_path = "clips/clip_69.mp4"
 
-    # Process all clips in the clips directory
-    clips_dir = "clips"
-    if not os.path.exists(clips_dir):
-        print(f"Error: Directory '{clips_dir}' not found")
+    if not os.path.isfile(video_path):
+        print(f"Error: File not found - {video_path}")
         return
 
-    print(f"Analyzing clips in '{clips_dir}'...")
-    for clip_name in sorted(os.listdir(clips_dir)):
-        if clip_name.endswith(('.mp4', '.avi', '.mov')):  # Supported video formats
-            clip_path = os.path.join(clips_dir, clip_name)
-            print(f"\nProcessing clip: {clip_name}")
-            process_clip(clip_path, captioner, analyzer)
+    captioner = CaptionerLite()
+    analyzer = ActivityAnalyzer()
 
-    print("\nAnalysis complete.")
+    process_video(video_path, captioner, analyzer)
 
 if __name__ == "__main__":
     main()
