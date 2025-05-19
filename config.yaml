@@ -1,0 +1,54 @@
+# BLIP-2 Model Configuration
+blip2:
+  model_type: "Salesforce/blip2-flan-t5-xl"  # Options: blip2-opt-2.7b, blip2-flan-t5-xxl
+  use_quantization: True    # 8-bit quantization for GPU memory savings
+  max_new_tokens: 50        # Maximum length of generated caption
+  num_beams: 5              # Beam search width
+
+# Security Tagging Configuration
+security_tags:
+  person: "**PERSON**"
+  mask: "**MASKED_INDIVIDUAL**"
+  bag: "**UNATTENDED_ITEM**"
+  night: "**NIGHT_ACTIVITY**"
+  climb: "**INTRUSION_ATTEMPT**"
+  weapon: "**POTENTIAL_WEAPON**"
+  crowd: "**UNUSUAL_CROWD**"
+  run: "**SUSPICIOUS_MOVEMENT**"
+
+# Alert Thresholds
+alert_thresholds:
+  "**PERSON**": 3
+  "**MASKED_INDIVIDUAL**": 1
+  "**UNATTENDED_ITEM**": 1
+  "**INTRUSION_ATTEMPT**": 1
+  "**POTENTIAL_WEAPON**": 1
+
+# System Configuration
+device: "auto"              # auto, cuda, or cpu
+log_level: "INFO"           # DEBUG, INFO, WARNING, ERROR
+
+# Video Processing
+video:
+  default_fps: 1            # Frames processed per second
+  night_mode:
+    enabled: True
+    clahe:
+      clip_limit: 2.0
+      tile_grid_size: [8, 8]
+
+# Alert Channels
+alert_channels:
+  console: True
+  email:
+    enabled: False
+    smtp_server: "smtp.example.com"
+    smtp_port: 587
+  sms:
+    enabled: False
+    provider: "twilio"      # twilio or other
+
+# Debugging
+debug:
+  save_failed_frames: True
+  frame_save_path: "./debug_frames"

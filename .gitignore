@@ -1,0 +1,85 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sitemap.xml
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environment
+venv/
+ENV/
+env/
+.env/
+.venv/
+
+# IDE specific
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Data files
+*.mp4
+*.avi
+*.mov
+*.jpg
+*.png
+*.npy
+*.pkl
+*.h5
+*.pt
+*.bin
+*.csv
+*.json
+*.txt
+clips/       # Exclude video clips directory
+temp/        # Exclude temporary frame storage
+debug_frames/
+
+# Model checkpoints
+*.ckpt
+*.safetensors
+*.pth
+*.onnx
+
+# Logs and outputs
+logs/
+results/
+output/
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+*.ipynb_checkpoints
+
+# Jupyter Notebook
+*.ipynb
+
+# Config secrets
+config_secret.yaml
+*.env
+*.key
+*.pem
+
+# Hugging Face cache
+.cache/
+transformers/
